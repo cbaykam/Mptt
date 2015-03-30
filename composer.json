@@ -1,0 +1,20 @@
+{
+    "name": "cbaykam/mptt",
+    "type": "library",
+    "description": "A library to only use in the mpv3 application",
+    "keywords": ["data","mptt"],
+    "homepage": "https://github.com/cbaykam/Mptt",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cem Baykam",
+            "email": "cbaykam@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+    }
+}
