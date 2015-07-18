@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../../public/v1/helpers/MySQLiHelper.php');
+require_once(APP_ROOT . 'public/v1/helpers/MySQLiHelper.php');
 class Mptt
 {
 
