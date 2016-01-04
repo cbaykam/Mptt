@@ -1300,26 +1300,13 @@ class Mptt
     public function _init($tree_id = null, $init_again = FALSE) {
         // if the results are not already cached
         if (!isset($this->lookup) || $init_again) {
-
-            $qr = '
-
-                SELECT
-                    *
-                FROM
-                    ' . $this->properties['table_name'];
-
+            $qr = 'SELECT * FROM' . $this->properties['table_name'];
             if($tree_id){ 
                 $qr .= ' WHERE tree_id = ' . $tree_id ; 
             }
-
-            $qr .= '
-                ORDER BY
-                    ' . $this->properties['left_column'] . '
-
-            ';
+            $qr .= 'ORDER BY' . $this->properties['left_column'];
             // fetch data from the database
             $result = $this->connection->query($qr);
-
             $this->lookup = array();
             // iterate through the found records
             if($result){
