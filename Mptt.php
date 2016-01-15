@@ -1304,7 +1304,7 @@ class Mptt
             if($tree_id){ 
                 $qr .= ' WHERE tree_id = ' . $tree_id ; 
             }
-            $qr .= 'ORDER BY' . $this->properties['left_column'];
+            $qr .= ' ORDER BY ' . $this->properties['left_column'];
             // fetch data from the database
             $result = $this->connection->query($qr);
             $this->lookup = array();
