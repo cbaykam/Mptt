@@ -20,11 +20,13 @@ class Mptt
      *                                  Default is <i>parent</i>
      *  @return void
      */
-    public function __construct($init_connection = true, $id_column = 'id', $left_column = 'lft', $right_column = 'rght', $parent_column = 'parent_id') {
+    public function __construct($init_connection = true, $cache_tree = false, $id_column = 'id', $left_column = 'lft', $right_column = 'rght', $parent_column = 'parent_id') {
 
         if($init_connection){
             $this->connection = new MySQLiHelper();
         }
+
+        $this->cache_tree = $cache_tree; 
 
         // initialize properties
         $this->properties = array(
@@ -909,8 +911,11 @@ class Mptt
                 $result[$id]['children'] = $this->get_tree($id, $tree_id);
             }   
 
-            $cache_key = $this->table_name . '-' . $tree_id; 
-            $this->cache->set($cache_key, $result);
+            if($this->cache_tree){
+                $cache_key = $this->table_name . '-' . $tree_id; 
+                $this->cache->set($cache_key, $result);
+            }
+            
         }
 
         // return the array
