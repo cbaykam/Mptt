@@ -909,7 +909,8 @@ class Mptt
                 $result[$id]['children'] = $this->get_tree($id, $tree_id);
             }   
 
-            $this->cache->set($tree_id, $result);
+            $cache_key = $this->table_name . '-' . $tree_id; 
+            $this->cache->set($cache_key, $result);
         }
 
         // return the array
