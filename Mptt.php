@@ -36,9 +36,15 @@ class Mptt
             'parent_column' =>  $parent_column,
         );
 
+        $this->cache = new Memcache; 
+        $this->cache->connect('localhost', 11211); 
+
     }
 
     function add($parent, $fields, $tree_id = null, $position = false) {
+        if($this->cache->get($tree_id)){
+            $this->cache->delete($tree_id);
+        }
         // lazy connection: touch the database only when the data is required for the first time and not at object instantiation
         $this->_init($tree_id);
 
@@ -450,6 +456,9 @@ class Mptt
      *  @return boolean                 TRUE on success or FALSE upon error.
      */
     function delete($node, $tree_id = null) { 
+        if($this->cache->get($tree_id)){
+            $this->cache->delete($tree_id);
+        }
         // lazy connection: touch the database only when the data is required for the first time and not at object instantiation
         $this->_init($tree_id);
 
@@ -887,15 +896,19 @@ class Mptt
      *                                          node.
      */
     function get_tree($node = 0, $tree_id, $children_only = true, $init_again = false) {
-        // get direct children nodes
-        $result = $this->get_children($node, $tree_id, $children_only, $init_again);
+        $is_cached = $this->cache->get($tree_id);
+        if($is_cached){
+            $result['cached'] = true; 
+            $result = $is_cached; 
+        }else{
+            // get direct children nodes
+            $result = $this->get_children($node, $tree_id, $children_only, $init_again);
 
-        // iterate through the direct children nodes
-        foreach ($result as $id => $properties)
-
-            // for each child node create a "children" property
-            // and get the node's children nodes, recursively
-            $result[$id]['children'] = $this->get_tree($id, $tree_id);
+            // iterate through the direct children nodes
+            foreach ($result as $id => $properties){
+                $result[$id]['children'] = $this->get_tree($id, $tree_id);
+            }   
+        }
 
         // return the array
         return $result;
@@ -941,7 +954,9 @@ class Mptt
      *  @return boolean                 TRUE on success or FALSE upon error
      */
     function move($source, $target, $tree_id = null, $position = false) {
-
+        if($tree_id && $this->cache->get($tree_id)){
+            $this->cache->delete($tree_id);
+        }
         // lazy connection: touch the database only when the data is required for the first time and not at object instantiation
         $this->_init($tree_id);
 
