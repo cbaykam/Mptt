@@ -908,6 +908,8 @@ class Mptt
             foreach ($result as $id => $properties){
                 $result[$id]['children'] = $this->get_tree($id, $tree_id);
             }   
+
+            $this->cache->set($tree_id, $result);
         }
 
         // return the array
