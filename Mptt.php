@@ -38,14 +38,14 @@ class Mptt
             'parent_column' =>  $parent_column,
         );
 
-        $this->cache = new Memcache; 
-        $this->cache->connect('localhost', 11211); 
+        $this->cache = $memcache_obj;
 
     }
 
     function add($parent, $fields, $tree_id = null, $position = false) {
-        if($this->cache->get($tree_id)){
-            $this->cache->delete($tree_id);
+        $cache_key = $this->table_name . '-' . $tree_id;
+        if($this->cache->get($cache_key)){
+            $this->cache->delete($cache_key);
         }
         // lazy connection: touch the database only when the data is required for the first time and not at object instantiation
         $this->_init($tree_id);
@@ -186,7 +186,8 @@ class Mptt
     }
 
     function copy($source, $target, $tree_id = null, $position = false) {
-    
+
+
         // lazy connection: touch the database only when the data is required for the first time and not at object instantiation
         $this->_init($tree_id);
 
@@ -898,7 +899,8 @@ class Mptt
      *                                          node.
      */
     function get_tree($node = 0, $tree_id, $children_only = true, $init_again = false) {
-        $is_cached = $this->cache->get($tree_id);
+        $cache_key = $this->table_name . '-' . $tree_id;
+        $is_cached = $this->cache->get($cache_key);
         if($is_cached){
             $result['cached'] = true; 
             $result = $is_cached; 
@@ -912,7 +914,6 @@ class Mptt
             }   
 
             if($this->cache_tree){
-                $cache_key = $this->table_name . '-' . $tree_id; 
                 $this->cache->set($cache_key, $result);
             }
             
